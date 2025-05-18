@@ -1,0 +1,133 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Django Settings{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Django Settings</h1>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2 class="h5 mb-0">Debug Mode</h2>
+        </div>
+        <div class="card-body">
+            <p class="mb-0">
+                <strong>DEBUG:</strong> 
+                <span class="badge {% if settings.DEBUG %}bg-danger{% else %}bg-success{% endif %}">
+                    {{ settings.DEBUG|yesno:"Enabled,Disabled" }}
+                </span>
+            </p>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2 class="h5 mb-0">Server Configuration</h2>
+        </div>
+        <div class="card-body">
+            <dl class="row mb-0">
+                <dt class="col-sm-3">Allowed Hosts</dt>
+                <dd class="col-sm-9">{{ settings.ALLOWED_HOSTS|join:", " }}</dd>
+
+                <dt class="col-sm-3">Time Zone</dt>
+                <dd class="col-sm-9">{{ settings.TIME_ZONE }}</dd>
+
+                <dt class="col-sm-3">Language Code</dt>
+                <dd class="col-sm-9">{{ settings.LANGUAGE_CODE }}</dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2 class="h5 mb-0">Internationalization</h2>
+        </div>
+        <div class="card-body">
+            <dl class="row mb-0">
+                <dt class="col-sm-3">I18N</dt>
+                <dd class="col-sm-9">{{ settings.USE_I18N|yesno:"Enabled,Disabled" }}</dd>
+
+                <dt class="col-sm-3">L10N</dt>
+                <dd class="col-sm-9">{{ settings.USE_L10N|yesno:"Enabled,Disabled" }}</dd>
+
+                <dt class="col-sm-3">Time Zone Support</dt>
+                <dd class="col-sm-9">{{ settings.USE_TZ|yesno:"Enabled,Disabled" }}</dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2 class="h5 mb-0">Static & Media Files</h2>
+        </div>
+        <div class="card-body">
+            <dl class="row mb-0">
+                <dt class="col-sm-3">Static URL</dt>
+                <dd class="col-sm-9">{{ settings.STATIC_URL }}</dd>
+
+                <dt class="col-sm-3">Media URL</dt>
+                <dd class="col-sm-9">{{ settings.MEDIA_URL }}</dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2 class="h5 mb-0">Installed Apps</h2>
+        </div>
+        <div class="card-body">
+            <ul class="list-unstyled mb-0">
+                {% for app in settings.INSTALLED_APPS %}
+                <li>{{ app }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2 class="h5 mb-0">Middleware</h2>
+        </div>
+        <div class="card-body">
+            <ul class="list-unstyled mb-0">
+                {% for middleware in settings.MIDDLEWARE %}
+                <li>{{ middleware }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2 class="h5 mb-0">Template Configuration</h2>
+        </div>
+        <div class="card-body">
+            {% for template in settings.TEMPLATES %}
+            <div class="mb-3">
+                <h3 class="h6">Template Backend: {{ template.BACKEND }}</h3>
+                <dl class="row mb-0">
+                    {% if template.NAME %}
+                    <dt class="col-sm-3">Name</dt>
+                    <dd class="col-sm-9">{{ template.NAME }}</dd>
+                    {% endif %}
+
+                    {% if template.DIRS %}
+                    <dt class="col-sm-3">Directories</dt>
+                    <dd class="col-sm-9">
+                        <ul class="list-unstyled mb-0">
+                            {% for dir in template.DIRS %}
+                            <li>{{ dir }}</li>
+                            {% endfor %}
+                        </ul>
+                    </dd>
+                    {% endif %}
+
+                    <dt class="col-sm-3">App Directories</dt>
+                    <dd class="col-sm-9">{{ template.APP_DIRS|yesno:"Enabled,Disabled" }}</dd>
+                </dl>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %} 
