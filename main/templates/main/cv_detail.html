@@ -41,14 +41,27 @@
         .back-link:hover {
             color: #495057;
         }
+        .action-buttons {
+            margin-top: 1rem;
+        }
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="cv-header">
         <div class="container">
-            <a href="{% url 'cv_list' %}" class="back-link mb-3 d-inline-block">
-                ← Back to CV List
-            </a>
+            <div class="d-flex justify-content-between align-items-center">
+                <a href="{% url 'cv_list' %}" class="back-link mb-3 d-inline-block">
+                    ← Back to CV List
+                </a>
+                <a href="{% url 'cv_pdf' cv.pk %}" class="btn btn-primary no-print">
+                    Download PDF
+                </a>
+            </div>
             <h1 class="display-4">{{ cv.firstname }} {{ cv.lastname }}</h1>
             <p class="lead text-muted">Last updated: {{ cv.updated_at|date:"F j, Y" }}</p>
         </div>
