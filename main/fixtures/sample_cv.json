@@ -1,0 +1,16 @@
+[
+    {
+        "model": "main.cv",
+        "pk": 1,
+        "fields": {
+            "firstname": "Johny",
+            "lastname": "Rogers",
+            "bio": "Experienced software developer with a passion for creating efficient and scalable applications.",
+            "skills": "Python, Django, REST APIs, PostgreSQL, Docker, Git, CI/CD, AWS, JavaScript, React",
+            "projects": "1. E-commerce Platform (Django, React, PostgreSQL)\n- Led development of a full-stack e-commerce solution\n- Implemented real-time inventory management\n- Integrated payment processing systems\n\n2. Task Management System (Django, Vue.js)\n- Built a collaborative project management tool\n- Implemented real-time updates using WebSockets\n- Created automated reporting features",
+            "contacts": "Email: john.doe@example.com\nPhone: +1 (234) 123-4567\nLinkedIn: linkedin.com/in/jonycool\nGitHub: github.com/jonycool",
+            "created_at": "2024-03-20T10:00:00Z",
+            "updated_at": "2024-03-20T10:00:00Z"
+        }
+    }
+] 

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ cv.firstname }} {{ cv.lastname }} - CV</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .cv-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+        .skill-badge {
+            background-color: #e9ecef;
+            padding: 0.5rem 1rem;
+            border-radius: 1rem;
+            font-size: 0.9rem;
+            margin: 0.25rem;
+            display: inline-block;
+        }
+        .section {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .section:last-child {
+            border-bottom: none;
+        }
+        .contact-info {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 0.5rem;
+        }
+        .back-link {
+            text-decoration: none;
+            color: #6c757d;
+        }
+        .back-link:hover {
+            color: #495057;
+        }
+    </style>
+</head>
+<body>
+    <div class="cv-header">
+        <div class="container">
+            <a href="{% url 'cv_list' %}" class="back-link mb-3 d-inline-block">
+                ← Back to CV List
+            </a>
+            <h1 class="display-4">{{ cv.firstname }} {{ cv.lastname }}</h1>
+            <p class="lead text-muted">Last updated: {{ cv.updated_at|date:"F j, Y" }}</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- Bio Section -->
+                <div class="section">
+                    <h2 class="h4 mb-3">Professional Summary</h2>
+                    <p class="lead">{{ cv.bio }}</p>
+                </div>
+
+                <!-- Skills Section -->
+                <div class="section">
+                    <h2 class="h4 mb-3">Skills</h2>
+                    <div class="skills-container">
+                        {% for skill in cv.skills.split %}
+                            <span class="skill-badge">{{ skill|cut:"," }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Projects Section -->
+                <div class="section">
+                    <h2 class="h4 mb-3">Projects</h2>
+                    <div class="projects">
+                        {{ cv.projects|linebreaks }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <!-- Contact Section -->
+                <div class="section">
+                    <h2 class="h4 mb-3">Contact Information</h2>
+                    <div class="contact-info">
+                        {{ cv.contacts|linebreaks }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

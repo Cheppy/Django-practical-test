@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV List</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .cv-item {
+            border-bottom: 1px solid #dee2e6;
+            padding: 1.5rem 0;
+        }
+        .cv-item:last-child {
+            border-bottom: none;
+        }
+        .skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .skill-badge {
+            background-color: #e9ecef;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+        }
+        .more-btn {
+            min-width: 100px;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <h1 class="text-center mb-5">CV List</h1>
+        
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                {% for cv in cvs %}
+                <div class="cv-item">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <h2 class="h4 mb-2">{{ cv.firstname }} {{ cv.lastname }}</h2>
+                            <p class="text-muted mb-3">{{ cv.bio|truncatewords:30 }}</p>
+                            
+                            <div class="skills-list mb-3">
+                                {% for skill in cv.skills.split %}
+                                <span class="skill-badge">{{ skill|cut:"," }}</span>
+                                {% endfor %}
+                            </div>
+                            
+                            <p class="text-muted small">Last updated: {{ cv.updated_at|date:"F j, Y" }}</p>
+                        </div>
+                        <div class="ms-3">
+                            <a href="{% url 'cv_detail' cv.pk %}" class="btn btn-outline-primary more-btn">
+                                More
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="alert alert-info">
+                    No CVs available yet.
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 
