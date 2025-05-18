@@ -1,9 +1,10 @@
 from django.test import TestCase, Client
 from django.urls import reverse
 from main.models import CV
+from django.http import HttpResponse
 
 class CVListViewTest(TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.client = Client()
         self.cv1 = CV.objects.create(
             firstname="John",
@@ -22,17 +23,17 @@ class CVListViewTest(TestCase):
             contacts="jane@example.com"
         )
 
-    def test_list_view_status_code(self):
+    def test_list_view_status_code(self) -> None:
         """Test list view returns 200 status code"""
         response = self.client.get(reverse('cv_list'))
         self.assertEqual(response.status_code, 200)
 
-    def test_list_view_template(self):
+    def test_list_view_template(self) -> None:
         """Test list view uses correct template"""
         response = self.client.get(reverse('cv_list'))
         self.assertTemplateUsed(response, 'main/cv_list.html')
 
-    def test_list_view_content(self):
+    def test_list_view_content(self) -> None:
         """Test list view displays all CVs"""
         response = self.client.get(reverse('cv_list'))
         self.assertContains(response, "John Doe")
@@ -42,7 +43,7 @@ class CVListViewTest(TestCase):
         self.assertContains(response, "Python")
         self.assertContains(response, "JavaScript")
 
-    def test_list_view_ordering(self):
+    def test_list_view_ordering(self) -> None:
         """Test CVs are ordered by creation date (newest first)"""
         response = self.client.get(reverse('cv_list'))
         content = response.content.decode()
@@ -53,7 +54,7 @@ class CVListViewTest(TestCase):
 
 
 class CVDetailViewTest(TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.client = Client()
         self.cv = CV.objects.create(
             firstname="John",
@@ -64,22 +65,22 @@ class CVDetailViewTest(TestCase):
             contacts="test@example.com"
         )
 
-    def test_detail_view_status_code(self):
+    def test_detail_view_status_code(self) -> None:
         """Test detail view returns 200 status code for existing CV"""
         response = self.client.get(reverse('cv_detail', kwargs={'pk': self.cv.pk}))
         self.assertEqual(response.status_code, 200)
 
-    def test_detail_view_404(self):
+    def test_detail_view_404(self) -> None:
         """Test detail view returns 404 for non-existent CV"""
         response = self.client.get(reverse('cv_detail', kwargs={'pk': 999}))
         self.assertEqual(response.status_code, 404)
 
-    def test_detail_view_template(self):
+    def test_detail_view_template(self) -> None:
         """Test detail view uses correct template"""
         response = self.client.get(reverse('cv_detail', kwargs={'pk': self.cv.pk}))
         self.assertTemplateUsed(response, 'main/cv_detail.html')
 
-    def test_detail_view_content(self):
+    def test_detail_view_content(self) -> None:
         """Test detail view displays all CV information"""
         response = self.client.get(reverse('cv_detail', kwargs={'pk': self.cv.pk}))
         self.assertContains(response, "John Doe")

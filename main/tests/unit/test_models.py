@@ -2,7 +2,7 @@ from django.test import TestCase
 from main.models import CV
 
 class CVModelTest(TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.cv_data = {
             'firstname': 'John',
             'lastname': 'Doe',
@@ -13,7 +13,7 @@ class CVModelTest(TestCase):
         }
         self.cv = CV.objects.create(**self.cv_data)
 
-    def test_cv_creation(self):
+    def test_cv_creation(self) -> None:
         """Test CV model creation and string representation"""
         self.assertEqual(str(self.cv), f"{self.cv_data['firstname']} {self.cv_data['lastname']}")
         self.assertEqual(self.cv.firstname, self.cv_data['firstname'])
@@ -23,7 +23,7 @@ class CVModelTest(TestCase):
         self.assertEqual(self.cv.projects, self.cv_data['projects'])
         self.assertEqual(self.cv.contacts, self.cv_data['contacts'])
 
-    def test_cv_timestamps(self):
+    def test_cv_timestamps(self) -> None:
         """Test CV model timestamps"""
         self.assertIsNotNone(self.cv.created_at)
         self.assertIsNotNone(self.cv.updated_at)

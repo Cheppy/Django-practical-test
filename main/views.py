@@ -5,6 +5,8 @@ from django.urls import reverse
 
 from .models import CV
 from .utils import generate_pdf_sync
+from rest_framework import viewsets, permissions
+from .serializers import CVSerializer
 import logging
 
 logger = logging.getLogger(__name__)
@@ -48,3 +50,27 @@ def cv_pdf(request: HttpRequest, pk: int) -> HttpResponse:
     except Exception as e:
         logger.error(f"Error generating PDF: {str(e)}")
         raise
+
+class CVViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows CVs to be viewed or edited.
+    """
+    queryset = CV.objects.all().order_by('-created_at')
+    serializer_class = CVSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self) -> list[CV]:
+        queryset = CV.objects.all().order_by('-created_at')
+        logger.info(f"Retrieved {queryset.count()} CVs from database")
+        for cv in queryset:
+            logger.debug(f"CV: {cv.firstname} {cv.lastname} (ID: {cv.id})")
+        return queryset
+
+    def perform_create(self, serializer) -> None:
+        logger.info("Creating new CV")
+        serializer.save()
+        logger.info(f"Created CV: {serializer.instance.firstname} {serializer.instance.lastname} (ID: {serializer.instance.id})")
+
+    def list(self, request: HttpRequest, *args: tuple, **kwargs: dict) -> HttpResponse:
+        logger.info(f"Listing CVs. User: {request.user}, Authenticated: {request.user.is_authenticated}")
+        return super().list(request, *args, **kwargs)
