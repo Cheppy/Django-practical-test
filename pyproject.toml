@@ -18,6 +18,17 @@ packages = [
     { include = "CVProject" }
 ]
 
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0.0"
+pytest-django = "^4.8.0"
+pytest-asyncio = "^0.23.5"
+pytest-cov = "^4.1.0"
+
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "CVProject.settings"
+python_files = ["test_*.py", "*_test.py"]
+addopts = "--cov=main --cov-report=term-missing"
