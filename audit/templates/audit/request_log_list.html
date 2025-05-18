@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Request Logs</title>
+</head>
+<body>
+    <h1>Recent Request Logs</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Timestamp</th>
+                <th>Method</th>
+                <th>Path</th>
+                <th>User</th>
+                <th>Remote IP</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in latest_logs %}
+            <tr>
+                <td>{{ log.timestamp }}</td>
+                <td>{{ log.method }}</td>
+                <td>{{ log.path }}</td>
+                <td>{{ log.user|default:"Anonymous" }}</td>
+                <td>{{ log.remote_ip|default:"N/A" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">No request logs found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html> 

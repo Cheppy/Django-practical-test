@@ -91,8 +91,6 @@
 # Task 9: Deployment
 
 - Deploy this project to DigitalOcean or any other VPS.  
-  (If you do not have a DigitalOcean account, you can use this referral link to create an account with $200 on balance:  
-  **https://m.do.co/c/xxxxxxxxx*)
 
 # CV Project
 
