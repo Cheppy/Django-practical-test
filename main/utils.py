@@ -3,6 +3,7 @@ from pyppeteer import launch
 
 import logging
 import traceback
+import pyppeteer_install
 
 logger = logging.getLogger(__name__)
 
@@ -15,16 +16,17 @@ async def generate_pdf(url: str) -> bytes:
     Returns:
         bytes: The generated PDF content
     """
+    pyppeteer_install.chromium_downloader.download_chromium()
+
     browser = None
     try:
         logger.info(f"Starting PDF generation for URL: {url}")
-        
         browser = await launch(
             headless=True,
             handleSIGINT=False,  
             handleSIGTERM=False,  
-            handleSIGHUP=False,  
-            args=[
+            handleSIGHUP=False,
+        args=[
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
                 '--disable-dev-shm-usage',
