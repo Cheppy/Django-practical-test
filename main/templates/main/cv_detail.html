@@ -49,18 +49,49 @@
                 display: none !important;
             }
         }
+        .translation-controls {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .loading-spinner {
+            width: 3rem;
+            height: 3rem;
+        }
     </style>
 </head>
 <body>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner-border loading-spinner text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
     <div class="cv-header">
         <div class="container">
             <div class="d-flex justify-content-between align-items-center">
                 <a href="{% url 'cv_list' %}" class="back-link mb-3 d-inline-block">
                     ← Back to CV List
                 </a>
-                <a href="{% url 'cv_pdf' cv.pk %}" class="btn btn-primary no-print">
-                    Download PDF
-                </a>
+                <div>
+                    <a href="{% url 'cv_pdf' cv.pk %}" class="btn btn-primary no-print me-2">
+                        Download PDF
+                    </a>
+                </div>
             </div>
             <h1 class="display-4">{{ cv.firstname }} {{ cv.lastname }}</h1>
             <p class="lead text-muted">Last updated: {{ cv.updated_at|date:"F j, Y" }}</p>
@@ -68,18 +99,51 @@
     </div>
 
     <div class="container">
+        <!-- Translation Controls -->
+        <div class="translation-controls mb-4">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <select id="languageSelect" class="form-select">
+                        <option value="">Select Language</option>
+                        <option value="Cornish">Cornish</option>
+                        <option value="Manx">Manx</option>
+                        <option value="Breton">Breton</option>
+                        <option value="Inuktitut">Inuktitut</option>
+                        <option value="Kalaallisut">Kalaallisut</option>
+                        <option value="Romani">Romani</option>
+                        <option value="Occitan">Occitan</option>
+                        <option value="Ladino">Ladino</option>
+                        <option value="Northern Sami">Northern Sami</option>
+                        <option value="Upper Sorbian">Upper Sorbian</option>
+                        <option value="Kashubian">Kashubian</option>
+                        <option value="Zazaki">Zazaki</option>
+                        <option value="Chuvash">Chuvash</option>
+                        <option value="Livonian">Livonian</option>
+                        <option value="Tsakonian">Tsakonian</option>
+                        <option value="Saramaccan">Saramaccan</option>
+                        <option value="Bislama">Bislama</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <button id="translateButton" class="btn btn-success w-100" disabled>
+                        Translate CV
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-lg-8">
                 <!-- Bio Section -->
                 <div class="section">
                     <h2 class="h4 mb-3">Professional Summary</h2>
-                    <p class="lead">{{ cv.bio }}</p>
+                    <p class="lead" id="bio">{{ cv.bio }}</p>
                 </div>
 
                 <!-- Skills Section -->
                 <div class="section">
                     <h2 class="h4 mb-3">Skills</h2>
-                    <div class="skills-container">
+                    <div class="skills-container" id="skills">
                         {% for skill in cv.skills.split %}
                             <span class="skill-badge">{{ skill|cut:"," }}</span>
                         {% endfor %}
@@ -89,7 +153,7 @@
                 <!-- Projects Section -->
                 <div class="section">
                     <h2 class="h4 mb-3">Projects</h2>
-                    <div class="projects">
+                    <div class="projects" id="projects">
                         {{ cv.projects|linebreaks }}
                     </div>
                 </div>
@@ -99,7 +163,7 @@
                 <!-- Contact Section -->
                 <div class="section">
                     <h2 class="h4 mb-3">Contact Information</h2>
-                    <div class="contact-info">
+                    <div class="contact-info" id="contacts">
                         {{ cv.contacts|linebreaks }}
                     </div>
                 </div>
@@ -109,5 +173,81 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Translation JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const languageSelect = document.getElementById('languageSelect');
+            const translateButton = document.getElementById('translateButton');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+
+            // Enable/disable translate button based on language selection
+            languageSelect.addEventListener('change', function() {
+                translateButton.disabled = !this.value;
+            });
+
+            // Handle translation
+            translateButton.addEventListener('click', async function() {
+                const language = languageSelect.value;
+                if (!language) return;
+
+                // Show loading overlay
+                loadingOverlay.style.display = 'flex';
+
+                try {
+                    const response = await fetch(`{% url 'cv_translate' cv.pk %}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': getCookie('csrftoken')
+                        },
+                        body: JSON.stringify({ language })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        // Update content with translations
+                        document.getElementById('bio').textContent = data.translated.bio;
+                        
+                        // Update skills
+                        const skillsContainer = document.getElementById('skills');
+                        const skills = data.translated.skills.split(',').map(skill => 
+                            `<span class="skill-badge">${skill.trim()}</span>`
+                        ).join('');
+                        skillsContainer.innerHTML = skills;
+                        
+                        // Update projects and contacts (preserve line breaks)
+                        document.getElementById('projects').innerHTML = data.translated.projects.replace(/\n/g, '<br>');
+                        document.getElementById('contacts').innerHTML = data.translated.contacts.replace(/\n/g, '<br>');
+                    } else {
+                        alert('Translation failed: ' + data.error);
+                    }
+                } catch (error) {
+                    console.error('Translation error:', error);
+                    alert('An error occurred during translation. Please try again.');
+                } finally {
+                    // Hide loading overlay
+                    loadingOverlay.style.display = 'none';
+                }
+            });
+
+            // Helper function to get CSRF token
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+        });
+    </script>
 </body>
 </html> 

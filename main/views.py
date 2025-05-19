@@ -1,13 +1,17 @@
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import ListView, DetailView
-from django.http import HttpResponse, HttpRequest
+from django.http import HttpResponse, HttpRequest, JsonResponse
 from django.urls import reverse
+from django.views.decorators.http import require_POST
+from django.core.exceptions import ValidationError
 
-from .models import CV
+from .models import CV, Language
 from .utils import generate_pdf_sync
+from .translation import translate_text
 from rest_framework import viewsets, permissions
 from .serializers import CVSerializer
 import logging
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -21,6 +25,11 @@ class CVDetailView(DetailView):
     model = CV
     template_name = 'main/cv_detail.html'
     context_object_name = 'cv'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['languages'] = Language.objects.all()
+        return context
 
 def cv_pdf(request: HttpRequest, pk: int) -> HttpResponse:
     """Generate PDF for a CV
@@ -50,6 +59,47 @@ def cv_pdf(request: HttpRequest, pk: int) -> HttpResponse:
     except Exception as e:
         logger.error(f"Error generating PDF: {str(e)}")
         raise
+
+@require_POST
+def translate_cv(request: HttpRequest, pk: int) -> JsonResponse:
+    """Translate CV content to the selected language
+    
+    Args:
+        request: The HTTP request containing the target language
+        pk: The primary key of the CV
+        
+    Returns:
+        JsonResponse: The translated CV content
+    """
+    try:
+        cv = get_object_or_404(CV, pk=pk)
+        data = json.loads(request.body)
+        target_language = data.get('language')
+        
+        if not target_language:
+            raise ValidationError("Language not specified")
+            
+        # Translate each field
+        translated = {
+            'firstname': cv.firstname,  # Keep names untranslated
+            'lastname': cv.lastname,    # Keep names untranslated
+            'bio': translate_text(cv.bio, target_language),
+            'skills': translate_text(cv.skills, target_language),
+            'projects': translate_text(cv.projects, target_language),
+            'contacts': translate_text(cv.contacts, target_language)
+        }
+        
+        return JsonResponse({
+            'success': True,
+            'translated': translated
+        })
+        
+    except Exception as e:
+        logger.error(f"Translation error: {str(e)}")
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=400)
 
 class CVViewSet(viewsets.ModelViewSet):
     """

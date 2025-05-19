@@ -9,7 +9,9 @@ readme = "README.md"
 requires-python = "^3.11"
 dependencies = [
     "django (>=5.2.1,<6.0.0)",
-    "pyppeteer (>=1.0.2)"
+    "pyppeteer (>=1.0.2)",
+    "openai (>=1.0.0)",
+    "python-dotenv (>=1.0.0)"
 ]
 
 [tool.poetry]
