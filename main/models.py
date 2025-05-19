@@ -16,3 +16,13 @@ class CV(models.Model):
     class Meta:
         verbose_name = "CV"
         verbose_name_plural = "CVs"
+
+class Language(models.Model):
+    code = models.CharField(max_length=10, unique=True)
+    name = models.CharField(max_length=50)
+    
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['name']
