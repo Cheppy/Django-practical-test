@@ -207,3 +207,8 @@ poetry run python manage.py loaddata main/fixtures/sample_cv.json
 poetry run python manage.py runserver
 ```
 
+5. To run in the docker:
+```bash
+docker compose -f docker-compose.yml build --no-cache && docker compose -f docker-compose.yml up -d --remove-orphans
+```
+

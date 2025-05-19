@@ -1,11 +1,13 @@
 import asyncio
 from pyppeteer import launch
 
+import CVProject.settings as settings
+
 import logging
 import traceback
-import pyppeteer_install
 
 logger = logging.getLogger(__name__)
+CHROME_PATH = '/usr/bin/chromium'
 
 async def generate_pdf(url: str) -> bytes:
     """Generate PDF using pyppeteer
@@ -16,12 +18,13 @@ async def generate_pdf(url: str) -> bytes:
     Returns:
         bytes: The generated PDF content
     """
-    pyppeteer_install.chromium_downloader.download_chromium()
+    print("nikoniniiii")
 
     browser = None
     try:
         logger.info(f"Starting PDF generation for URL: {url}")
         browser = await launch(
+            executablePath=settings.CHROME_PATH,
             headless=True,
             handleSIGINT=False,  
             handleSIGTERM=False,  
