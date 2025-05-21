@@ -130,6 +130,12 @@ USE_TZ = os.environ.get('USE_TZ', 'True').lower() == 'true' # Read from env var
 
 STATIC_URL = os.environ.get('STATIC_URL', 'static/') # Read from env var
 
+
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
